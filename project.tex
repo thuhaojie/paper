@@ -1,0 +1,114 @@
+\documentclass[CJK, a4paper]{cctart}
+\usepackage{indentfirst}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{chemarrow}
+\usepackage{color}
+\usepackage{url}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{}
+\chead{}
+\rhead{\bfseries Project}
+\lfoot{Author: Cao Wei}
+\cfoot{}
+\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\title{Project}
+\author{Cao Wei \\ 2013311397}
+\date{}
+\begin{document}
+\maketitle
+\thispagestyle{fancy}
+Besides the huge quantity of data, it is also a serious problem to deal with the rapid and high dimensional data. In such a background, the data streaming model was proposed. It is a widely used model not only on IT but also in astronomic, communicating and economic fields. The first appearance of this model could be traced back to 20th century, but it is one of the hottest topic in recent years since the scale of the data becomes the bottleneck of modern IT development. Based on such model, the data streaming algorithms have the characteristics of high timeliness, low complexity and approximation.
+
+The approximation is the core of the data streaming algorithm. The real data in internet is actually occupied by the large quantity of redundance. In this section we introduce several classical data streaming algorithms to give a sketch how this model fit the modern data processing.
+
+\section{Conception}
+In data streaming model, the source signal could be regards as a high dimension vector $\vec{A}$. Initially, $\vec{A}$ equals $\vec{0}$.  The data is a continuous tuple sequence $<a_1, ..., a_n>$ denoting a updating of the source signal. According to the type of tuple, it can be classified by:
+\begin{enumerate}
+\item Time Series Model : $a_i$ is an integer indicating update $A_i$ by $a_i = A_i$.
+\item Cashier Register Model : $a_i$ is a two-wise tuple $(j, D_i), D_i \ge 0$, which indicating an updating $A_i[j]$ by $A_{i-1}[j] + D_i$
+\item Turnstile Model : $a_i$ is a two-wise tuple $(j, D_i), D_i \in R$, which indicating an updating $A_i[j]$ by $A_{i-1}[j] + D_i$
+\end{enumerate}
+This paper only concern about the cashier model. Consider an IP tracker, with each visiting counted once by $(IP, 1)$, thus it is a representational application of cashier model. Moreover, assume all the data is pass-efficient.
+
+\section{Methods}
+The typical methods in streaming model consist of \emph{Sampling} and \emph{Sketching}. \emph{Sampling} method will draw the data with a specific probability and the distribution of data will be reconstruct by the samples. While the \emph{Sketching} method mapping the arbitrary data with a hash function to a length fixed space in order to decrease the space complexity. Moreover the sketching method is simple to build but well performed. Especially, the error of approximation could be bounded with a small factor of $L_p$ norm.
+
+Human beings could be regarded as a "biological" sketching machine. The sensors of human receive a consequently high dimensional signal(such as audio and video signal) from the nature rapidly and process it with sketching method. Therefore people usually could not remember every thing happened before, but they might have a vague idea about that. Differ from sampling, the sketching method is sensitive to abnormal data which implies the sketching could be used into anomaly detection. 
+
+\subsection{Flajolet-Martin}
+Flajolet-Martin is used to estimate distinct elements of data. Suppose the sequence of streaming equals $\delta = <a_1, ..., a_n>$, for each $a_i$ we have $a_i = (j \in [n], D_i = 1)$. Therefore it is a streaming description of frequency vector $f = (f_1, .., f_n)$ and the result algorithm's output should be $d = |\{j : f_j > 0\}|$.
+
+Since the dimension of source signal could be unsolvable large, then the algorithm is supposed to output an approximation with small error bounded. Formally, suppose the output is $\hat{d}$, for any $\epsilon, \delta > 0$, $Pr[|\hat{d}-d|>\epsilon]$ should be less equal than $\delta$.
+
+Let $zeor(x)$ be the quantity of $0$s in the tail of binary representation. Here we provide the algorithm:
+
+\textbf{Flajolet-Martin Algorithm}
+\begin{enumerate}
+\item Initialization
+\subitem Choose a hash function $h:[n] \rightarrow [n]$ from $2$-wise independent hash function family.
+\subitem Initialize $z = 0$
+\item Processing Data
+\subitem Update $z = \max\{z, zeros(h(j))\}$
+\item Output
+\subitem $2^{z+\frac{1}{2}}$
+\end{enumerate}
+Although Flajolet-Martin Algorithm is a simple algorithm but the reason it works is not trivial. To analyze the algorithm, suppose $z = t$ when the algorithm terminate. Let $Y_r = \sum_{j:f_i>0}X_{r,j}$, then $Y_r \ge 0 \Leftrightarrow t \ge r$. Equivalently, $Y_r = 0 \Leftrightarrow t \le r - 1$. Since $h$ maps an arbitrary number in $[n]$ to a binary string with length $log(n)$. Therefore:
+$$E[X_{r, j}] = Pr[zeros(h(j)) \ge r] = Pr[2^r divides h(j)] = \frac{1}{2^r}$$
+$$E[Y_r] = \sum_{j:f_i > 0}E[X_{r,j}] = \frac{d}{2^r}$$
+Also notice $h$ is pair-wise independent, we have
+\begin{eqnarray*}
+Var[Y_r] = \sum_{j:f_j>0}Var[X_{r,j}]
+\le \sum_{j:f_j>0}E[X^2_{r,j}]
+=\sum_{j:f_j>0}E[X_{r, j}]
+=\frac{d}{2^r}
+\end{eqnarray*}
+
+Substitute the equation to \emph{Markov Inequality} and \emph{Chebyshev Inequality}, it implies:
+$$Pr[Y_r > 0] = Pr[Y_r \ge 1] \le \frac{E[Y_r]}{1} = \frac{d}{2^r}$$
+and
+$$Pr[Y_r = 0] = Pr[|Y_r - E[Y_r]| \ge \frac{d}{2^r}] \le \frac{2^r}{d}$$
+
+To give a reasonable error bound of $\hat{d} = 2^{t + \frac{1}{2}}$, let $a$ be the smallest integer satisfy $2^{t + \frac{1}{2}} \ge 3d$, $b$ be the largest integer satisfy $2^{t + \frac{1}{2}} \le \frac{d}{3}$. Thus it is guaranteed with probability at least $53\%$ $\hat{d}$ is in interval $[\frac{d}{3}, 3d]$.
+
+Since the algorithm is supposed to bound the error with arbitrary $\epsilon$. A statistical trick called \emph{Median Trick} will be used here. The intuition of Median Trick is to maintain $k$ procedures parallelly and promise the distribution of $k$ estimator is approximate Gaussian distribution. Therefore we could pick $\hat{d}_{k/2}$ as the final estimator instead. More precisely, we need introduce a crucial bound in probability theory, the \emph{Chernoff Bound}.
+
+\textbf{Chernoff Bound}: $X_1, X_2, ..., X_n$ are random variables follows distribution with parameters $p$. Even $S$ denote more than half of $X$ equals $1$. Then $Pr(S) \ge 1 - exp\{-\frac{1}{2p}n(p-\frac{1}{2})^2\}$.
+
+Let $X_i$ denote $\hat{d}_i \ge 3d$, substitute $n = k, p \le \frac{\sqrt{2}}{3} $ we have $Pr(S) = 2^{-\Omega(k)} = \delta $. Maintain $k = \Theta(log(\frac{1}{\delta})) $ procedures parallelly, and output $\hat{d}_{1/2}$, the algorithm gives a $(O(1), \delta) $ approximation with space complexity $O(log(\frac{1}{\delta})log(n))$. 
+
+\subsection{Count Sketch}
+Count Sketch is a crucial streaming data structure. It supports point, range, inner product and even quantile queries.
+
+Restricted in cashier model, the algorithm maintain a $t$-rows $k$-columns table. Each row contains a vector in $k$ dimension indicating the projection space of the hash function. Utilize the median trick, the algorithm is provided:
+
+\textbf{Count Sketch Algorithm For Point Query}
+\begin{enumerate}
+\item Initialization
+\subitem build a table $C$ with $t$ rows and $k$ columns, $t = \lceil log(\frac{1}{\delta}) \rceil$, $k = \frac{3}{\epsilon^2} $. Set all the elements as zero.
+\subitem Select $t$ independent hash functions $h : [n] \rightarrow [k]$ from $2$-universal randomly
+\subitem Select $t$ independent hash functions $g : [n] \rightarrow \{-1, +1\}$ from $2$-universal randomly
+\item Processing Data
+\subitem $for \ i = 1 \rightarrow \ t \ \mathbf{do} \ C[i][h_i(j)] \ \leftarrow \ C[i][h_i(j)] + cg_i(j) $
+\item Output
+\subitem $\hat{f_a} = median_{1 \le i \le t} \ g_i(a)C[i][h_i(a)] $
+\end{enumerate}
+
+To analyze the algorithm, consider a specific row of the table $C_t$. Let $X_t = \hat{f_a} $ be the output of input $a$, the indicator variable $Y_j$ indicate $h(j) = h(a) $. Since $C_t[h(a)] $ is updated only when $h_t(j) = h_t(a) $, the accumulated contribution is $f_j \cdot g_t(j) $, Therefore
+$$X = g_t(a)\sum_{j = 1}^{n}f_jg_t(j)Y_j = f_a + \sum_{j \in [n] \backslash \{a\} }f_jg_t(a)Y_j$$
+According to the properties of expectation, we have 
+$$E[g_t(j)Y_j] = E[g_t(j)]E[Y_j] = 0 $$
+which implies
+$$E[X_t] = f_a + \sum_{j \in [n] \backslash \{a\} }f_jg_t(a)Y_j = f_a + 0 = f_a $$
+As it shows the output is an unbiased estimator of $f_a$. Since $g(a)^2 = 1$, it implies $Var[x] = \sum_{j \in [n] \backslash \{a\}}\frac{f_j^2}{k} = \frac{{\parallel \mathbf{f} \parallel}_2^2 - f_a^2}{k} $. Take it into Chernoff bound and let $t = O(log(\frac{1}{\delta})) $, then for any given $\epsilon, \delta > 0$, count sketch promise $Pr[|\hat{f_a} - f_a| \ge {\epsilon \parallel \mathbf{f}_{-a} \parallel}_2] \le \delta  $.
+
+
+\end{document}
