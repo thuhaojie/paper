@@ -53,17 +53,17 @@ Stu.ID -- \\
 \maketitle
 
 \begin{abstract}
-Traditional methods are restricted in modern IT since the quantity of the data becomes extremely huge. Instead, some technical methods of processing the massive data are proposed. In this paper, we introduced some typical methods in processing massive data of three difference stages, data processing, storage, executing, and knowledge mining. Moreover, we gave a brief introduction of a theoretical model called streaming model which could be used in processing high dimension massive data.
+Traditional methods are restricted in modern IT since the quantity of the data becomes extremely huge. Instead, some technical methods of processing the massive data are proposed. In this paper, we introduced some typical methods in processing massive data in three difference stages, storage, executing, and knowledge mining. Moreover, we give a brief introduction of a theoretical model called streaming model which could be used in processing high dimension massive data.
 \end{abstract}
 
 \section{Introduction}
- With the rapid development of internet, many kinds of applications such as social network and online video streaming generate large amount of data. Processing these massive data is called \emph{BigData Processing}. In the processing of BigData, we mainly focus on the data storage, algorithm executing and knowledge mining.
- 
+ With the rapid development of internet, many kinds of applications such as social network and online video streaming generate large amount of data. Processing these massive data is called \emph{BigData Processing}. In the processing of BigData, we mainly focus on the way of data storage, algorithm executing and knowledge mining.
+
  \paragraph{Storage}The distributed storage system is widely used to store the data. In order to keep the data safe, the system should be fairly reliable. Distributed storage system usually introduces redundancy to increase the reliability. In distributed storage, the data file is dispersed across the storage nodes in network. An end-user can retrieve the data by contacting a subset of the nodes. The most commonly used redundancy schemes are data replication (e.g. Google File System) and erasure code (e.g. OceanStore).
 
 The strategy of data replication is very simple and easy to manage, we just need to replicate the data file as many time as we want. For example, In Google File System, each file is replicated for three times. Replication is the most simple redundancy strategy. However, it has the drawback of low storage efficiency. When using the strategy of replication, we need a large number of disks to store those copies of the data file. The strategy of erasure code has high storage efficiency compared to the strategy of replication. However, it is hard to maintain the reliability. The erasure codes used in storage system are usually $(n, k)$ maximum distance separable (MDS) codes. When a storage node fails, the repair cost to repair the failed storage node is very high. We introduced hierarchical code and regenerating code to improve the performance of MDS code.
 
-      
+
 \paragraph{Executing}MapReduce is a programming model for executing the algorithms in large data sets with a parallel, distributed algorithm on a cluster. A MapReduce program is composed of a Map() procedure that performs filtering and sorting (such as sorting students by first name into queues, one queue for each name) and a Reduce() procedure that performs a summary operation (such as counting the number of students in each queue, yielding name frequencies). The MapReduce System orchestrates by marshaling the distributed servers, running the various tasks in parallel, managing all communications and data transfers between the various parts of the system, and providing for redundancy and fault tolerance.
 
 \paragraph{Knowledge Mining}Under the Big Data trend, tabular data on the Web has become a rich source of structured data that is useful for ordinary users to explore.  According to a recent Google study [1], there are a total of 14 billion raw HTML tables and, among those, 150 million relational data tables, easily making Web tables one of the richest structured data sources. There are many real-world applications that can benefit from high quality Web tables. First, search engines can utilize Web tables to improve the result quality. Existing search engines usually return relevant Web pages for queries and require users to “mine” answers from the returned Web pages. Obviously if there are many relevant high-quality Web tables, search engines can utilize these high-quality structured data to directly compute the answers and do not require users to search answers from documents. Query-answer (QA) systems can also utilize Web tables to easily generate answers for queries. Second, many systems want to provide Internet users with OLAP functionality, which is not supported in traditional keyword-based search systems. For example, if a user wants to know the average price of “iPhone 5” in Beijing. Search engines cannot answer such queries. If we can extract Web tables about prices of “iPhone 5” in Beijing, we can utilize these Web tables to answer such queries. Third, knowledge bases can use Web tables to enrich themselves by adding more concepts, entities and relationships between columns.
@@ -95,13 +95,13 @@ S_i & i \le k \\
 \right.
 \end{equation}
 
-Step 1, Choose parameter  $k_0, h_0$,  and build $HC(k_0 , h_0)$ code using Eq. (1). Generate $h_0$  parity nodes from $d_0 = k_0$  systematic nodes. $G_{d_0, 1}$  denotes the collection of the $k_0$ systematic nodes and the $h_0$ parity nodes , we call $G_{d_0, 1}$  as the code group of Layer 0. The combination degree of $G_{d_0, 1}$  is $d_0$. In Fig. 1(a), $k_0 = 2, h_0 = 1$.
+Step 1, Choose parameter  $k_0, h_0$,  and build $HC(k_0 , h_0)$ code using Eq. (1). Generate $h_0$  parity nodes from $d_0 = k_0$  systematic nodes. $G_{d_0, 1}$  denotes the collection of the $k_0$ systematic nodes and the $h_0$ parity nodes , we call $G_{d_0, 1}$  as the code group of Layer 0. The combination degree of $G_{d_0, 1}$  is $d_0$, $k_0 = 2, h_0 = 1$.
 
-Step 2, Choose parameter $g_1$ and $h_1$. Replicate the group structure in Step 1 for $g_1$  times to get  $g_1$ groups denoted as $G_{d_0, 1}, ..., G_{d_0, g_1}$ . Then generate $h_1$ parity nodes from $g_1k_0$  systematic nodes. Denote $G_{d_0, 1}, ..., G_{d_0, g_1}$ and the newly generated $h_1$  parity nodes as $G_{d_1, 1}$. We call $G_{d_1, 1}$  as code group of Layer 1. The combination degree of $G_{d_1, 1}$  is $d_1 = g_1d_0 = g_1k_0$ . The number pof parity nodes in $G_{d_1, 1}$ is $H_1 = g_1h_0 + h_1$. In Fig.1(b), $g_1 = 2, h_1 = 2, k_1 = d_1 = 4, H_1 = 4$.
+Step 2, Choose parameter $g_1$ and $h_1$. Replicate the group structure in Step 1 for $g_1$  times to get  $g_1$ groups denoted as $G_{d_0, 1}, ..., G_{d_0, g_1}$ . Then generate $h_1$ parity nodes from $g_1k_0$  systematic nodes. Denote $G_{d_0, 1}, ..., G_{d_0, g_1}$ and the newly generated $h_1$  parity nodes as $G_{d_1, 1}$. We call $G_{d_1, 1}$  as code group of Layer 1. The combination degree of $G_{d_1, 1}$  is $d_1 = g_1d_0 = g_1k_0$ . The number pof parity nodes in $G_{d_1, 1}$ is $H_1 = g_1h_0 + h_1$, $g_1 = 2, h_1 = 2, k_1 = d_1 = 4, H_1 = 4$.
 
 	Step 3, Repeat Step 2 to generate the code graph layer by layer. In Step $i$, choose parameter $g_i$ and $h_i$. Replicate the structure of $G_{d_{i-1}, 1}$  for $g_i$  times, then add $h_i$  parity nodes by encoding $g_id_{i-1}$  systematic nodes. Denote this code group as $G_{d, 1}$. $G_{d, 1}$ is code group of Layer $i$. In $G_{d, 1}$ , $k_i = d_i = g_id_{i- 1}$  , $H_i = g_iH_{i - 1} + h_i$ . We denote the code as $HC(k_i, H_i)$ code.
 
-In Fig. 1(b), $G_{2, 1}, G_{2, 2}$  are code groups of Layer 0, $G_{4, 1}$ is code group of Layer 1. Duminuco \emph{et al}. established the following rules for data reconstruction and node regeneration.
+$G_{2, 1}, G_{2, 2}$  are code groups of Layer 0, $G_{4, 1}$ is code group of Layer 1. Duminuco \emph{et al}. established the following rules for data reconstruction and node regeneration.
 
 \textbf{Reconstruction Condition} Consider $B^k$, a set of $k$ nodes in the code graph of a $HC(k, h)$ code. If the nodes in $B^k$ are chosen fulfilling the following condition:
 
@@ -111,7 +111,7 @@ belonging the code which means that in $B^k$  there can be a maximum of $d$ node
 \textbf{Regeneration Condition}Denote $G(p)$ as all the code groups which contain the failed node $p$, $R(p)$ as the set of nodes which helps in the repair process. If $\forall p, R(p)$ fulfils the following conditions:
 $$|G_{d, i} \bigcap R(p)| \le d, \forall G_{d, i}$$
 
-and 
+and
 
 $$\exists G_{d, i} \in G(p) : R(p) \subseteq G_{d, i}, |R(p)| = d$$
 
@@ -158,7 +158,7 @@ Recently, the research works most focus on the design of the MSR code and MBR co
 \end{verbatim}
 Let’s assume the other four mapper tasks (working on the other four files not shown here) produced the following intermediate results:
 \begin{verbatim}
-(Beijing, 18) (Shenzhen, 27) (Shanghai, 32) 
+(Beijing, 18) (Shenzhen, 27) (Shanghai, 32)
 (Tianjin, 37)(Beijing, 32) (Shenzhen, 20)
 (Shanghai, 33) (Tianjin, 38)(Beijing, 22)
 (Shenzhen, 19) (Shanghai, 20) (Tianjin, 31)
@@ -272,7 +272,7 @@ $$E[X_t] = f_a + \sum_{j \in [n] \backslash \{a\} }f_jg_t(a)Y_j = f_a + 0 = f_a 
 As it shows the output is an unbiased estimator of $f_a$. Since $g(a)^2 = 1$, it implies $Var[x] = \sum_{j \in [n] \backslash \{a\}}\frac{f_j^2}{k} = \frac{{\parallel \mathbf{f} \parallel}_2^2 - f_a^2}{k} $. Take it into Chernoff bound and let $t = O(log(\frac{1}{\delta})) $, then for any given $\epsilon, \delta > 0$, count sketch promise $Pr[|\hat{f_a} - f_a| \ge {\epsilon \parallel \mathbf{f}_{-a} \parallel}_2] \le \delta  $.
 
 \subsection{Conclusion}
-We have introduced three typical methods and a crucial model for processing massive data. For a storage of big data we blablablablablablablablablabla(don't write too much)
+We have introduced three typical methods and a crucial model for processing massive data. For the  storage of big data we conclude that both hierarchical and regenerating code are reliable and efficient. This implies they are good choices for building storage system to store the large amount of data. For the executing, the map reduce model works well when performing the sort of aggregate operations typical in business intelligence-daily sales totals for instance-as well as operations such as web search that involve searches through massive data sets. For the knowledge mining, high precision could obtained from ML-based approach when sacrificing time performance. On the contrary, traditional IR-based approach could offer more fast responsible time under a little bit lower correctness. Compromising time and precision performance of two method mentioned above, human hybrid method is the better choice, although requiring some payment for crowd sourcing. For these research potentials, web table management will attract more attention from academic communities in the near years. Finally, besides these methods to processing the massive data based on current model. It might be a good way to utilizing streaming model in the future Internet. 
 \subsubsection*{References}
 
 \small{
